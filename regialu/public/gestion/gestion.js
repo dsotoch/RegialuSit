@@ -3,7 +3,7 @@ var datos = {};
 var filas = "";
 var id = "";
 $("#div-options").hide();
-import { showDangerToast } from "/static/melody/js/toastDemo.js";
+import { showDangerToast } from "/melody/js/toastDemo.js";
 console.log("Trabajando gestion.js");
 function getCookie(name) {
     let cookieValue = null;
@@ -23,7 +23,7 @@ function getCookie(name) {
 const csrftoken = getCookie("csrftoken");
 
 $(document).on('click', '#new-management', function () {
-    window.location.href = "/Gestion/";
+    window.location.href = "/Gestiones/IndexGestion";
 });
 $(document).on('change', '#current_period', function () {
     let current_period = $(this).val().trim();
@@ -34,11 +34,10 @@ $(document).on('change', '#current_period', function () {
             type: "GET",
             contentType: "application/json; charset=utf-8",
             dataType: "json",
-            url: "GetInstitutionByPeriod/" + current_period + "/",
-            data: "",
+            url: "/Gestiones/InstitucionPeriodo/" + current_period + "/",
+            data: {_token:csrftoken},
             success: function (institutions_json) {
-
-                var institutions = JSON.parse(institutions_json);
+                var institutions = institutions_json;
                 if (institutions.length > 0) {
                     $('#label_gestion').empty();
                     $('#label_gestion').html("Gestionando Periodo " + period);
@@ -50,7 +49,7 @@ $(document).on('change', '#current_period', function () {
                     }));
                     for (var i = 0; i < institutions.length; i++) {
                         $('#current_institution').append($('<option>', {
-                            value: institutions[i].idInstitucion,
+                            value: institutions[i].id,
                             text: institutions[i].nombre
                         }));
                     }
@@ -98,28 +97,28 @@ $(document).on('change', '#current_institution', function () {
             type: "GET",
             contentType: "application/json; charset=utf-8",
             dataType: "json",
-            url: "GetInstitutionByPeriodSelected/" + current_institution + "/",
+            url: "/Gestiones/InstitucionSeleccionada/" + current_institution + "/",
             data: "",
             success: function (response) {
                 $('#label_gestion').empty();
                 $('#label_gestion').html("Gestionando Periodo " + period + "/ Institución " + " " + institution);
                 table.clear().draw();
                 if (response != 'error') {
-                    let classrooms = JSON.parse(response)
+                    let classrooms =response
                     if (classrooms.length > 0) {
                         let level = "";
                         for (var i in classrooms) {
                             switch (classrooms[i].nivel) {
-                                case 'PRI':
+                                case 'Primaria':
                                     level = 'Primaria';
                                     break;
-                                case 'SEC':
+                                case 'Secundaria':
                                     level = 'Secundaria';
                                     break;
-                                case 'SUP':
+                                case 'Superior':
                                     level = 'Superior';
                                     break;
-                                case 'AFI':
+                                case 'Afianzamiento':
                                     level = 'Afianzamiento';
                                     break;
 
@@ -128,7 +127,7 @@ $(document).on('change', '#current_institution', function () {
                                     break;
                             }
 
-                            let newrow = [classrooms[i].idAula, classrooms[i].grado, classrooms[i].seccion, level, '<center> <button style="background-color: yellow;" title="Gestionar" id="btn-management"> <i class="fas fa-edit"></i> </button> </center>'];
+                            let newrow = [classrooms[i].id, classrooms[i].grado, classrooms[i].seccion, level, '<center> <button style="background-color: yellow;" title="Gestionar" id="btn-management"> <i class="fas fa-edit"></i> </button> </center>'];
                             table.row.add(newrow).draw();
                         }
                         $('#titlemodal').html(institution);
@@ -187,12 +186,12 @@ $(document).on('click', '#btn-assistance', function () {
         type: "GET",
         contentType: "application/json; charset=utf-8",
         dataType: "json",
-        url: "GetStudents/" + id + "/",
-        data: "",
+        url: "/Gestiones/RetornarEstudiantes/" + id + "/",
+        data: {_token:csrftoken},
 
         success: function (response) {
-
-            let students = JSON.parse(response);
+            console.log(response);
+            let students = response;
             if (response != 'error') {
                 if (students.length > 0) {
                     $("#div-asistencia").prop("hidden", false);
@@ -200,7 +199,7 @@ $(document).on('click', '#btn-assistance', function () {
                     $("#btn-assistance").prop("disabled", true);
 
                     for (var n in students) {
-                        let newrow = ['<button title="Click para Generar Reporte del Alumno Seleccionado" class="btn btn-info btn-icon-text" id="btn-report-assistance"> <i class="fas fa-file btn-icon-prepend"></i> Reporte de Asistencia </button>', students[n].idAlumno, students[n].apellidos, students[n].nombres, classroom, ' <div class="row"><div class="col-4"><input class="btn-success"  type="radio" name="state' + [n] + '"  id="state"  value="A"> A</div><div class="col-4"><input class="btn-success"  type="radio" name="state' + [n] + '" id="state"  value="F"> F</div><div class="col-4"><input class="btn-success"  type="radio"  name="state' + [n] + '"  id="state"  value="T"> T</div></div>'];
+                        let newrow = ['<button title="Click para Generar Reporte del Alumno Seleccionado" class="btn btn-info btn-icon-text" id="btn-report-assistance"> <i class="fas fa-file btn-icon-prepend"></i> Reporte de Asistencia </button>', students[n].id, students[n].apellidos, students[n].nombres, classroom, ' <div class="row"><div class="col-4"><input class="btn-success"  type="radio" name="state' + [n] + '"  id="state"  value="A"> A</div><div class="col-4"><input class="btn-success"  type="radio" name="state' + [n] + '" id="state"  value="F"> F</div><div class="col-4"><input class="btn-success"  type="radio"  name="state' + [n] + '"  id="state"  value="T"> T</div></div>'];
                         table.row.add(newrow).draw();
                     }
 
@@ -222,32 +221,33 @@ $(document).on('click', '#btn-assistance', function () {
         type: "GET",
         contentType: "application/json; charset=utf-8",
         dataType: "json",
-        url: "GetStudentsHorario/" + id + "/",
-        data: "",
+        url: "/Gestiones/HorariosEstudiante/" + id + "/",
+        data: {_token:csrftoken},
         success: function (response) {
+            console.log(response);
             let turno=""
 
-            let horarios = JSON.parse(response);
+            let horarios = response;
             let day = "";
             if (horarios.length > 0) {
                 for (var n in horarios) {
                     switch (horarios[n].dia) {
-                        case 'LUN':
+                        case 'Lunes':
                             day = "Lunes";
                             break;
-                        case 'MAR':
+                        case 'Martes':
                             day = "Martes";
                             break;
-                        case 'MIE':
+                        case 'Miercoles':
                             day = "Miercoles";
                             break;
-                        case 'JUE':
+                        case 'Jueves':
                             day = "Jueves";
                             break;
-                        case 'VIE':
+                        case 'Viernes':
                             day = "Viernes";
                             break;
-                        case 'SAB':
+                        case 'Sabado':
                             day = "Sabado";
                             break;
 
@@ -257,16 +257,16 @@ $(document).on('click', '#btn-assistance', function () {
                             break;
                     }
                     switch (horarios[n].turno) {
-                        case 'MAN':
+                        case 'Mañana':
                             turno="Mañana"                            
                             break;
-                        case 'TAR':
+                        case 'Tarde':
                             turno="Tarde"
                         default:
                             turno="Noche"
                             break;
                     }
-                    $("#horario").append($("<option></option>").attr("value", JSON.parse(response)[n].idArea).text(JSON.parse(response)[n].area + "/" + day + "/" + JSON.parse(response)[n].horaInicio + "/" + JSON.parse(response)[n].horaFin +"/ TURNO :"+ turno));
+                    $("#horario").append($("<option></option>").attr("value", response[n].idHorario).text(response[n].area + "/" + day + "/" + response[n].horaInicio + "/" + response[n].horaFin +"/ TURNO :"+ turno));
 
                 }
             } else {
@@ -317,12 +317,12 @@ $(document).on('click', '#save-assistance', function () {
         showDangerToast("Seleccione Un Horario Para Poder Gestionar la Asistencia del Area que le pertenece A Dicho horario");
     } else {
         $.ajax({
-            type: "POST",
+            type: "get",
             contentType: "application/json; charset=utf-8",
             dataType: "json",
-            url: "Asistencia/SaveAssistance/" + id + "/",
-            data: JSON.stringify({ data: datos, area: area }),
-            headers: { "X-CSRFToken": csrftoken },
+            url: "/Asistencias/GuardarAsistencia/" + id + "/",
+            data: { data: datos, area: area,_token:csrftoken },
+            
             success: function (response) {
                 if (response.response == 'success') {
                     confirmationassistance("Asistencia Registrada Correctamente");

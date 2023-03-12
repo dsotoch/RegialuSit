@@ -1,6 +1,6 @@
 console.log("trabajando notas.js");
-import { showDangerToast } from "/static/melody/js/toastDemo.js";
-import { showWarningToast } from "/static/melody/js/toastDemo.js";
+import { showDangerToast } from "/melody/js/toastDemo.js";
+import { showWarningToast } from "/melody/js/toastDemo.js";
 
 console.log("Trabajando gestion.js");
 function getCookie(name) {

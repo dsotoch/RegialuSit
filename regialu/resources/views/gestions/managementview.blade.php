@@ -212,13 +212,10 @@
 @endsection
 @section('javascript')
 <script src="{{ asset('melody/js/toastDemo.js')}}" type="module"></script>
-
 <script src="{{ asset('gestion/gestion.js')}}" type="module"></script>
-
 <script src="{{ asset('melody/js/data-table.js') }}"></script>
 <script src="{{ asset('incidencia/incidencia.js')}}" type="module"></script>
 <script src="{{ asset('incidencia/table.js')}}"></script>
-
 <script src="{{ asset('notas/notas.js')}}" type="module"></script>
 
 

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ControllerAlumnos;
 use App\Http\Controllers\ControllerAreas;
+use App\Http\Controllers\ControllerAsistencias;
 use App\Http\Controllers\ControllerAulas;
 use App\Http\Controllers\ControllerCuenta;
 use App\Http\Controllers\ControllerGestions;
@@ -105,5 +106,12 @@ Route::controller(ControllerAlumnos::class)->prefix('Alumnos')->group(function (
 });
 Route::controller(ControllerGestions::class)->prefix('Gestiones')->group(function(){
     Route::get('IndexGestion', 'management_view')->name('indexGestion');
+    Route::get('InstitucionPeriodo/{id}','get_institution_by_period');
+    Route::get('InstitucionSeleccionada/{id}','get_aulas');
+    Route::get('RetornarEstudiantes/{id}','get_students');
+    Route::get('HorariosEstudiante/{id}','get_students_horario');
 
+});
+Route::controller(ControllerAsistencias::class)->prefix('Asistencias')->group(function (){
+    Route::get('GuardarAsistencia/{id}','');
 });

@@ -1,4 +1,4 @@
-import { showDangerToast } from "/static/melody/js/toastDemo.js";
+import { showDangerToast } from "/melody/js/toastDemo.js";
 
 console.log("Trabajando incidencia.js");
 function getCookie(name) {
