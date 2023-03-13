@@ -35,7 +35,7 @@ $(document).on('change', '#current_period', function () {
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             url: "/Gestiones/InstitucionPeriodo/" + current_period + "/",
-            data: {_token:csrftoken},
+            data: { _token: csrftoken },
             success: function (institutions_json) {
                 var institutions = institutions_json;
                 if (institutions.length > 0) {
@@ -104,7 +104,7 @@ $(document).on('change', '#current_institution', function () {
                 $('#label_gestion').html("Gestionando Periodo " + period + "/ Institución " + " " + institution);
                 table.clear().draw();
                 if (response != 'error') {
-                    let classrooms =response
+                    let classrooms = response
                     if (classrooms.length > 0) {
                         let level = "";
                         for (var i in classrooms) {
@@ -187,7 +187,7 @@ $(document).on('click', '#btn-assistance', function () {
         contentType: "application/json; charset=utf-8",
         dataType: "json",
         url: "/Gestiones/RetornarEstudiantes/" + id + "/",
-        data: {_token:csrftoken},
+        data: { _token: csrftoken },
 
         success: function (response) {
             console.log(response);
@@ -222,10 +222,10 @@ $(document).on('click', '#btn-assistance', function () {
         contentType: "application/json; charset=utf-8",
         dataType: "json",
         url: "/Gestiones/HorariosEstudiante/" + id + "/",
-        data: {_token:csrftoken},
+        data: { _token: csrftoken },
         success: function (response) {
             console.log(response);
-            let turno=""
+            let turno = ""
 
             let horarios = response;
             let day = "";
@@ -258,15 +258,15 @@ $(document).on('click', '#btn-assistance', function () {
                     }
                     switch (horarios[n].turno) {
                         case 'Mañana':
-                            turno="Mañana"                            
+                            turno = "Mañana"
                             break;
                         case 'Tarde':
-                            turno="Tarde"
+                            turno = "Tarde"
                         default:
-                            turno="Noche"
+                            turno = "Noche"
                             break;
                     }
-                    $("#horario").append($("<option></option>").attr("value", response[n].idHorario).text(response[n].area + "/" + day + "/" + response[n].horaInicio + "/" + response[n].horaFin +"/ TURNO :"+ turno));
+                    $("#horario").append($("<option></option>").attr("value", response[n].idHorario).text(response[n].area + "/" + day + "/" + response[n].horaInicio + "/" + response[n].horaFin + "/ TURNO :" + turno));
 
                 }
             } else {
@@ -321,8 +321,8 @@ $(document).on('click', '#save-assistance', function () {
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             url: "/Asistencias/GuardarAsistencia/" + id + "/",
-            data: { data: datos, area: area,_token:csrftoken },
-            
+            data: { data: datos, area: area, _token: csrftoken },
+
             success: function (response) {
                 if (response.response == 'success') {
                     confirmationassistance("Asistencia Registrada Correctamente");
@@ -350,12 +350,7 @@ $(document).on('click', '#btn-update-assistance', function () {
     let parseaula = aula.replace(/ /g, "-");
 
     $("#div-asistencia").prop("hidden", true);
-    $("#div-assistance").load("Asistencia/UpdateAssistance/" + parseaula + "/");
-
-
-
-
-    // 
+    $("#div-assistance").load("/Asistencias/UpdateAssistance/" + parseaula);
 
 
 });
@@ -376,11 +371,11 @@ $(document).on('click', '#search', function () {
             type: "GET",
             contentType: "application/json; charset=utf-8",
             dataType: "json",
-            url: "Asistencia/GetAssistance/" + date + "/" + idaula + "/",
-            headers: { "X-CSRFToken": csrftoken },
+            data: { _token: csrftoken },
+            url: "/Asistencias/GetAssistance/" + date + "/" + idaula + "/",
             success: function (response) {
-                var students = JSON.parse(response);
-                if (response != 'error') {
+                var students = response;
+                if (response.response != 'error') {
 
                     if (students.length > 0) {
                         let newrow = [];
@@ -433,12 +428,11 @@ $(document).on('click', '#state-update', function () {
 $(document).on('click', '#update-assistance', function () {
     fecha = $("#search-date").val();
     $.ajax({
-        type: "PUT",
+        type: "get",
         contentType: "application/json; charset=utf-8",
         dataType: "json",
-        url: "Asistencia/UpdateAssistanceData/" + id + "/" + fecha + "/",
-        data: JSON.stringify({ data: updatedata }),
-        headers: { "X-CSRFToken": csrftoken },
+        url: "/Asistencias/UpdateAssistanceData/" + id + "/" + fecha + "/",
+        data: { 'data': updatedata, _token: csrftoken },
         success: function (response) {
             if (response.response == 'success') {
                 confirmationassistance("Asistencia Actualizada Correctamente");
@@ -464,17 +458,16 @@ $(document).on('click', '#btn-report-assistance', function () {
         'aulas': aula,
         'periodo': periodo,
         'institucions': institucions,
-        'area': area,
+        'area': area, _token: csrftoken,
     }
     if (area == "") {
         error("Selecciona un Horario para Realizar el Reporte de la Asistencia del Area que Pertenece a Dicho Horario");
     } else {
-        $.ajax({
-            type: "POST",
-            url: "Asistencia/ReportStudent/" + idstudent + "/",
-            data: JSON.stringify(data),
-            headers: { "X-CSRFToken": csrftoken },
 
+        $.ajax({
+            type: "get",
+            url: "/Asistencias/ReportStudent/" + idstudent + "/",
+            data: (data),
             success: function (response) {
                 $("#modalReport").modal();
                 $("#pdfReport").empty();
@@ -506,18 +499,23 @@ $(document).on('change', '#horario', function () {
 
 
 });
-$(document).on('click','#generatePDF', function () {
+$(document).on('click', '#generatePDF', function () {
     $.ajax({
-        type: "POST",
-        url: "Asistencia/SavePDF/",
-        data: {'html':$("#pdfReport")[0].outerHTML},
-        headers: { "X-CSRFToken": csrftoken },
+        type: "get",
+        url: "/Asistencias/SavePDF/",
+        data: { 'html': $("#pdfReport").html(), _token: csrftoken },
+
+
         success: function (response) {
-            let blob=new Blob([response],{type:'aplication/pdf'});
-            let link=document.createElement('a');
-            link.href=window.URL.createObjectURL(blob);
-            link.download = "Reporte.pdf";
+            // Crear un enlace con el contenido devuelto
+            var link = document.createElement('a');
+            link.href = 'data:application/pdf;base64,' + response.pdf;
+            link.download = 'nombre-del-archivo.pdf';
+            link.target = '_blank';
+
+            // Hacer que el usuario haga clic en el enlace para descargar el archivo
             link.click();
+
             $("#modalReport").modal('hide');
             confirmation("PDF generado Correctamente || Revisa tu carpeta de Descargas");
 

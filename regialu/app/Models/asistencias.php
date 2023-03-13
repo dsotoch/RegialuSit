@@ -7,5 +7,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class asistencias extends Model
 {
-    use HasFactory;
+    protected $fillable = [
+        'user_id',
+        'fechaRegistro',
+        'fechaActualizacion',
+        'estado',
+        'alumno_id',
+        'aula_id',
+        'area_id',
+    ];
 }

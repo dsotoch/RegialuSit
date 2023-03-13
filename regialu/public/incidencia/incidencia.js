@@ -24,7 +24,7 @@ $(document).on('click', '#btn-incident', function () {
     $("#div-asistencia").prop("hidden", true)
 
     $("#div-assistance").empty();
-    $("#div-assistance").load("Incidencia/" + idaula + "/");
+    $("#div-assistance").load("/Incidentes/IndexIncidentes/" + idaula + "/");
 
 
 
@@ -83,17 +83,16 @@ $(document).on('click', '#btn-save-incident', function (e) {
 
         } else {
             $.ajax({
-                type: "POST",
+                type: "get",
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
-                url: "Incidencia/SaveIncident/",
-                data: JSON.stringify({ classroom: classroom, description: description, date: date, students: obj_students }),
-                headers: { "X-CSRFToken": csrftoken },
+                url: "/Incidentes/GuardarIncidente",
+                data: { 'classroom': classroom, 'description': description, 'date': date, 'students': obj_students, _token: csrftoken },
                 success: function (response) {
-                    let data = JSON.parse(response);
+                    let data = response;
                     if (response != 'error') {
                         $("#exampleModal3").modal("hide");
-                        let newrow = [data.idIncidente, data.fecha, data.descripcion, ' <div class="row"><div class="col-6">  <button class="btn-success" id="view-students" title="Click para Ver Alumnos Responsables"> <i class="fas fa-eye"></i> </button></div><div class="col-6">   <button class="btn-danger" id="delete-incident" title="Click para Eliminar Incidencia"> <i class="fas fa fa-window-close"></i> </button></div></div>'];
+                        let newrow = [data.id, data.fecha, data.descripcion, ' <div class="row"><div class="col-6">  <button class="btn-success" id="view-students" title="Click para Ver Alumnos Responsables"> <i class="fas fa-eye"></i> </button></div><div class="col-6">   <button class="btn-danger" id="delete-incident" title="Click para Eliminar Incidencia"> <i class="fas fa fa-window-close"></i> </button></div></div>'];
                         table.row.add(newrow).draw();
                         confirmation("Incidencia Registrada Correctamente");
                     } else {
@@ -118,11 +117,10 @@ $(document).on('click', '#view-students', function () {
         type: "GET",
         contentType: "application/json; charset=utf-8",
         dataType: "json",
-        url: "Incidencia/GetStudentsIncident/" + id_incident + "/",
-        data: "",
-        headers: { "X-CSRFToken": csrftoken },
+        url: "/Incidentes/GetStudentsIncident/" + id_incident + "/",
+        data: {_token:csrftoken},
         success: function (response) {
-            let data = JSON.parse(response);
+            let data = response;
             if (response != 'error') {
                 $("#incident-description").html(description);
                 $("#modal-responsible-students").empty();
@@ -175,12 +173,11 @@ $(document).on('click', '#delete-incident', function (e) {
     }).then((value) => {
         if (value == true) {
             $.ajax({
-                type: "DELETE",
+                type: "get",
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
-                url: "Incidencia/DeleteIncident/" + id_incident + "/",
-                data: "",
-                headers: { "X-CSRFToken": csrftoken },
+                url: "/Incidentes/DeleteIncident/" + id_incident + "/",
+                data: {_token:csrftoken},
                 success: function (response) {
 
                     if (response != 'error') {
@@ -210,17 +207,20 @@ $(document).on('click', "#generatePDFIncident", function () {
 });
 $(document).on('click', '#PDFIncident', function () {
     $.ajax({
-        type: "POST",
-        data: { 'html': $("#incidente-reporte")[0].outerHTML },
-        url: "Incidencia/Pdf/",
-        headers: { "X-CSRFToken": csrftoken },
+        type: "get",
+        data: { 'html': $("#incidente-reporte").html(),_token:csrftoken },
+        url: "/Incidentes/Pdf",
 
         success: function (response) {
-            let blob = new Blob([response], { type: 'application/pdf' })
-            let url = document.createElement('a')
-            url.href = window.URL.createObjectURL(blob)
-            url.download = "Incidencia.pdf"
-            url.click();
+             // Crear un enlace con el contenido devuelto
+             var link = document.createElement('a');
+             link.href = 'data:application/pdf;base64,' + response.pdf;
+             link.download = 'nombre-del-archivo.pdf';
+             link.target = '_blank';
+ 
+             // Hacer que el usuario haga clic en el enlace para descargar el archivo
+             link.click();
+ 
             $("#modalReporte").modal('hide');
             confirmation("PDF generado Correctamente || Revisa tu carpeta de Descargas");
 

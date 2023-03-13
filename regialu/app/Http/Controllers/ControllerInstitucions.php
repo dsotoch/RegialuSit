@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\models\institucions;
-use App\models\periodos;
+use App\Models\institucions;
+use App\Models\periodos ;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;

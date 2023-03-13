@@ -13,15 +13,13 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('asistencias', function (Blueprint $table) {
+        Schema::create('incidentes', function (Blueprint $table) {
             $table->id();
-            $table->string('estado');
-            $table->date('fechaRegistro');
-            $table->date('fechaActualizacion');
-            $table->foreignId('alumno_id')->references('id')->on('alumnos')->onDelete('cascade');
-            $table->foreignId('aula_id')->references('id')->on('aulas')->onDelete('cascade');
-            $table->foreignId('area_id')->references('id')->on('areas')->onDelete('cascade');
+            $table->string('descripcion');
+            $table->json('alumnos_id');
+            $table->date('fecha');
             $table->foreignId('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreignId('aula_id')->references('id')->on('aulas')->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -33,6 +31,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('asistencias');
+        Schema::dropIfExists('incidentes');
     }
 };

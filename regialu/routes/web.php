@@ -7,6 +7,7 @@ use App\Http\Controllers\ControllerAulas;
 use App\Http\Controllers\ControllerCuenta;
 use App\Http\Controllers\ControllerGestions;
 use App\Http\Controllers\ControllerHorarios;
+use App\Http\Controllers\ControllerIncidentes;
 use App\Http\Controllers\ControllerInstitucions;
 use App\Http\Controllers\ControllerLicencias;
 use App\Http\Controllers\ControllerPeriodos;
@@ -113,5 +114,19 @@ Route::controller(ControllerGestions::class)->prefix('Gestiones')->group(functio
 
 });
 Route::controller(ControllerAsistencias::class)->prefix('Asistencias')->group(function (){
-    Route::get('GuardarAsistencia/{id}','');
+    Route::get('GuardarAsistencia/{id}','save_assistance');
+    Route::get('UpdateAssistance/{id}','update_assistance');
+    Route::get('GetAssistance/{date}/{idaula}','get_assistance');
+    Route::get('UpdateAssistanceData/{id}/{date}','update_assistance_data');
+    Route::get('ReportStudent/{id}','generate_pdf');
+    Route::get('SavePDF','savePDF');
+
+});
+Route::controller(ControllerIncidentes::class)->prefix('Incidentes')->group(function (){
+    Route::get('IndexIncidentes/{id}','index_incident');
+    Route::get('GuardarIncidente','save_incident');
+    Route::get('DeleteIncident/{id}','delete_incident');
+    Route::get('GetStudentsIncident/{id}','get_students');
+    Route::get('Pdf','generate_pdf');
+
 });
