@@ -2,4 +2,8 @@
 deployment:
   tasks:
     - export DEPLOYPATH=/home/quality2/public_html/
+<<<<<<< HEAD
     - /bin/cp -R public $DEPLOYPATH
+=======
+    - /bin/cp -R public $DEPLOYPATH
+>>>>>>> 40ac870c75cad57d64763a62006b1ee9af22ebc5

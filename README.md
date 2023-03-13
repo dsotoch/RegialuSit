@@ -1,2 +1,2 @@
 # RegialuSit
-Sistema de Gestion Realizado en Laravel para Docentes
+Sistema de Gestion Realizado en Laravel para Docentes y Mysql
