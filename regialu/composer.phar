@@ -1,5 +1,0 @@
-#!/usr/bin/env php
-<?php
-Phar::mapPhar('composer.phar');
-require 'phar://composer.phar/bin/composer';
-__HALT_COMPILER();
